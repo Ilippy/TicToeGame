@@ -1,5 +1,6 @@
 import requests
 from Config import TOKEN
+
 URL = f"https://api.telegram.org/bot{TOKEN}/"
 
 
@@ -113,9 +114,17 @@ def send_board(chat_id, game, end_game=False):
     # Формируем клавиатуру с обновленными кнопками
     keyboard = {"inline_keyboard": buttons}
     url = URL + "sendMessage"
+    str_text = "Ваш ход!"
+    if end_game:
+        str_text = "Игра окончена. "
+        if game.winner == "Draw":
+            str_text += "Ничья."
+        else:
+            str_text += f"Победил: {game.winner}."
+
     payload = {
         "chat_id": chat_id,
-        "text": "Ваш ход!" if not end_game else f"Игра окончена. Побеждает: {game.winner}",
+        "text": str_text,
         "reply_markup": keyboard
     }
     requests.post(url, json=payload)
